@@ -2,6 +2,8 @@
 
 Tài liệu cho người cùng phát triển GAIA với chủ dự án (Đỗ Hiếu Nghĩa). Đọc file này trước, rồi tới [CLAUDE.md](CLAUDE.md).
 
+Đang làm: trang **Quản trị** ngay trong GAIA. Hai quản trị viên mời người dùng bằng tài khoản Google của mình, chỉ chủ nhóm cấp được credit. Khi xong, việc mời người không cần sửa `GAIA_ALLOWED_EMAILS` hay chạy SQL nữa.
+
 ## GAIA là gì, đang ở đâu
 
 GAIA Studio là web app tạo ảnh và video bằng AI, gõ prompt tiếng Việt. Phía sau, GAIA gọi API của **Gommo** qua tài khoản **79ai** của chủ dự án.
@@ -78,15 +80,17 @@ Quy tắc bắt buộc:
 
 ## Tài khoản dùng cho dự án
 
-| Dịch vụ | Ai dùng | Để làm gì |
-|---|---|---|
-| GitHub (repo `dohieunghia2002/Gaia-Studio`) | Mỗi người dùng tài khoản của mình | Đẩy code |
-| Supabase project `ynifiicggklbnszvjjkb` | Tài khoản của chủ dự án, dùng chung | Database, đăng nhập, xem log, chạy SQL, cấp credit |
-| Google Cloud (OAuth client của GAIA) | Tài khoản của chủ dự án, dùng chung | Cấu hình đăng nhập Google, Test users, thêm địa chỉ khi deploy |
-| 79ai / Gommo | Tài khoản của chủ dự án, dùng chung | Xem số dư và lịch sử trừ tiền thật |
-| Vercel (khi tạo) | Tài khoản của chủ dự án, dùng chung | Deploy. Gói miễn phí chỉ có 1 người dùng |
+GAIA có hai quản trị viên là Nghĩa (chủ nhóm) và Bằng. Mỗi người dùng tài khoản riêng của mình, trừ việc trả tiền: chỉ chủ nhóm nạp tiền 79ai và cấp credit.
 
-Thông tin đăng nhập các tài khoản trên và các khoá bí mật (`.env`, Google client secret) chủ dự án gửi riêng, kèm file `DOC-TRUOC.txt` hướng dẫn và cách đổi khoá nếu lộ.
+| Dịch vụ | Cách dùng | Để làm gì |
+|---|---|---|
+| GitHub | Tài khoản riêng của mỗi người | Đẩy code. Repo sẽ chuyển sang một GitHub Organization để cả hai đều là chủ |
+| Supabase project `ynifiicggklbnszvjjkb` | Chủ nhóm mời email của Bằng vào Organization (vai trò Administrator) | Database, đăng nhập, xem log, chạy SQL |
+| Google Cloud (OAuth client của GAIA) | Chủ nhóm thêm tài khoản Google của Bằng trong IAM | Cấu hình đăng nhập Google, Test users, thêm địa chỉ khi deploy |
+| 79ai / Gommo | Chỉ chủ nhóm | Nạp tiền. Token API nằm trong `.env`, nên chạy app trên máy vẫn tiêu tiền 79ai thật |
+| Vercel (khi tạo) | Project của chủ nhóm, gói miễn phí | Theo tài liệu Vercel, repo công khai được cộng tác miễn phí: ai push lên `main` thì Vercel tự deploy (sẽ thử thật lần deploy đầu). Trang quản lý Vercel (biến môi trường, log) trên gói miễn phí chỉ có 1 người |
+
+Các khoá bí mật (`.env`, Google client secret) chủ nhóm gửi riêng, kèm file `DOC-TRUOC.txt` hướng dẫn và cách đổi khoá nếu lộ.
 
 ## Tài liệu trong repo
 
