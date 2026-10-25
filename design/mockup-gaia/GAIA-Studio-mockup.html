@@ -52,8 +52,18 @@ body.png .viewer-bar{display:none}
 .running{display:inline-flex;align-items:center;gap:8px;height:32px;margin-bottom:6px;padding:0 14px;border-radius:999px;background:#2A2112;color:var(--accent);font-size:13px;font-weight:500}
 
 .group-title{margin:24px 0 12px;font-size:13px;font-weight:500;color:#A8A399}
+/* Tiêu đề ngày + nút trang: mỗi ngày 8 mục (2 hàng × 4) một trang */
+.group-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 16px;min-height:32px;margin:24px 0 12px}
+.group-head .group-title{margin:0}
+.group-count{font-weight:400;color:#8C877D}
+.pager{display:flex;align-items:center;gap:2px}
+.pager-btn{min-width:32px;height:32px;padding:0 6px;border:0;border-radius:8px;background:transparent;color:#A8A399;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.pager-btn:hover:not(:disabled){background:#1F1F1C;color:#EDEBE6}
+.pager-btn[aria-current="page"]{background:#2A2A26;color:#EDEBE6;font-weight:500}
+.pager-btn:disabled:not([aria-current="page"]){opacity:.35}
+.pager-gap{min-width:20px;text-align:center;color:#8C877D;font-size:13px}
 /* Thư viện: lưới đều, mọi ô cùng khung vuông; ảnh/video luôn đặt vừa trong khung (không cắt) */
-.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(280px,calc((100% - 48px) / 4)),1fr));gap:16px}
 .card{display:flex;flex-direction:column;position:relative;border-radius:12px;overflow:hidden;background:#181816;border:1px solid #262622}
 .card > a{display:flex;flex-direction:column;flex:1}
 .frame{position:relative;aspect-ratio:1/1;background:#121211;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -254,6 +264,8 @@ a.google-btn:hover{color:#1F1F1F;background:#F2F2F2}
     <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></symbol>
     <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
     <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-3v10l-5-3"/></symbol>
@@ -355,7 +367,7 @@ a.google-btn:hover{color:#1F1F1F;background:#F2F2F2}
   </div>
 
   <main id="library" style="flex: 1; padding: 0 32px 48px">
-    <h2 class="group-title">Hôm nay</h2>
+    <div class="group-head"><h2 class="group-title">Hôm nay<span class="group-count"> · 6 mục</span></h2></div>
     <div class="lib-grid">
 
       <div class="card">
@@ -438,7 +450,18 @@ a.google-btn:hover{color:#1F1F1F;background:#F2F2F2}
       </a>
     </div>
 
-    <h2 class="group-title">Hôm qua</h2>
+    <div class="group-head">
+      <h2 class="group-title">Hôm qua<span class="group-count"> · 54 mục</span></h2>
+      <nav class="pager" aria-label="Trang của Hôm qua">
+        <button type="button" class="pager-btn" aria-label="Trang trước"><svg width="16" height="16" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+        <button type="button" class="pager-btn">1</button>
+        <button type="button" class="pager-btn" aria-current="page">2</button>
+        <button type="button" class="pager-btn">3</button>
+        <span class="pager-gap" aria-hidden="true">…</span>
+        <button type="button" class="pager-btn">7</button>
+        <button type="button" class="pager-btn" aria-label="Trang sau"><svg width="16" height="16" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      </nav>
+    </div>
     <div class="lib-grid">
       <a href="#edit" class="card">
         <div class="frame"><div class="media" style="--r: 1/1; background: #3E3A2B"></div><span class="media-label">Ảnh · 1:1</span></div>
