@@ -28,7 +28,7 @@ Chi tiết và lý do (pháp lý): [CLAUDE.md](CLAUDE.md), mục "Private group 
 
 ## Chạy trên máy
 
-1. Cài **Node.js 24** và git, rồi `git clone https://github.com/dohieunghia2002/Gaia-Studio.git`. Push bằng tài khoản GitHub của bạn: chủ dự án đã mời bạn với quyền Write, nhớ chấp nhận lời mời.
+1. Cài **Node.js 24** và git, rồi `git clone https://github.com/gaia-studio-vn/Gaia-Studio.git`. Repo nằm trong Organization `gaia-studio-vn` (chuyển từ `dohieunghia2002/Gaia-Studio` ngày 25/10/2026; địa chỉ cũ tự chuyển hướng). Push bằng tài khoản GitHub của bạn; nhớ chấp nhận lời mời vào Organization.
 2. `npm install`
 3. Lấy file **`gaia-studio.env`** trong thư mục bí mật chủ dự án gửi riêng (không có trên GitHub), đặt vào thư mục gốc repo và đổi tên thành **`.env`**.
 4. `npm run dev`, rồi mở http://localhost:3000 và đăng nhập Google bằng email đã có trong `GAIA_ALLOWED_EMAILS`.
@@ -84,7 +84,7 @@ GAIA có hai quản trị viên là Nghĩa (chủ nhóm) và Bằng. Mỗi ngư�
 
 | Dịch vụ | Cách dùng | Để làm gì |
 |---|---|---|
-| GitHub | Tài khoản riêng của mỗi người | Đẩy code. Repo sẽ chuyển sang một GitHub Organization để cả hai đều là chủ |
+| GitHub (Organization `gaia-studio-vn`) | Tài khoản riêng của mỗi người, cả hai là Owner của Organization | Đẩy code, quản lý repo |
 | Supabase project `ynifiicggklbnszvjjkb` | Chủ nhóm mời email của Bằng vào Organization (vai trò Administrator) | Database, đăng nhập, xem log, chạy SQL |
 | Google Cloud (OAuth client của GAIA) | Chủ nhóm thêm tài khoản Google của Bằng trong IAM | Cấu hình đăng nhập Google, Test users, thêm địa chỉ khi deploy |
 | 79ai / Gommo | Chỉ chủ nhóm | Nạp tiền. Token API nằm trong `.env`, nên chạy app trên máy vẫn tiêu tiền 79ai thật |
