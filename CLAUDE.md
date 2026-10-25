@@ -116,13 +116,33 @@ Server code uses the secret-key client `supabaseAdmin()` (`lib/supabase/admin.ts
 
 The founder chose to run GAIA for themselves and a few invited friends, with no sales (legal reasons: selling needs a household-business registration and website notification under Decree 248/2026). `lib/access.ts` holds the switch.
 
-- `GAIA_ALLOWED_EMAILS` (comma-separated) non-empty turns the mode on. Empty means public mode: anyone with Google can sign in and top up via PayOS.
+- Private is the default. `GAIA_OPEN_SIGNUP=1` switches to public mode, where anyone with Google can sign in and top up via PayOS.
+- **Who may sign in (since 2026-10-25):**
+  - the owner, `GAIA_OWNER_EMAIL`;
+  - rows in `gaia_members` (migration `0004_members.sql`, roles `admin` | `member`, RLS on, no policies).
+  - This replaced the old `GAIA_ALLOWED_EMAILS` env list.
+- **How `roleOf` / `isEmailAllowed` in `lib/access.ts` read the members:**
+  - via its own supabase-js client (no `server-only`, because `proxy.ts` imports it);
+  - kept in memory for 30 s and deduped. `invalidateMembers()` runs after admin mutations.
+  - An email missing from the cached list triggers a re-read, at most every 3 s, so a new invite works at once on every instance. A removal can take up to 30 s on other instances.
+  - A stale cache is used on a transient error. With no cache it throws `AccessUnavailableError`, which `getUser()` maps to `AuthUnavailableError`.
+  - A missing table (PGRST205/42P01) counts as "nobody invited": only the owner gets in.
 - `isEmailAllowed` is enforced in three places:
   - `/auth/callback` signs a non-invited user out right after the code exchange and sends them to `/login?error=not_invited`.
   - `getUser()` returns null for a non-invited email, so pages redirect to /login and APIs return 401. This also covers an email removed from the list while its session is still alive.
   - `proxy.ts` on `/login` signs that session out (`scope: 'local'`) and adds `?error=not_invited`.
 - Top-up is off: `/api/topups` POST returns 403 `topup_disabled`. `CreditProvider` gets `canTopup={!isPrivateGroup()}`; with it false, every "Nạp credit" link and toast action is hidden, and the Credit page shows "Credit do chủ nhóm cấp" instead of the top-up panel. The 402 `insufficient_credits` message says to ask the group owner.
-- Credits are granted with `gaia_grant`. The local `.env` sets `GAIA_MARKUP=1`, so a GAIA credit equals a Gommo credit (1đ of 79ai cost).
+- Credits are granted from the admin page (owner only), which calls `gaia_grant`. The local `.env` sets `GAIA_MARKUP=1`, so a GAIA credit equals a Gommo credit (1đ of 79ai cost).
+- **Admin page `/admin` (2026-10-25)**, built from mockup `#admin` as approved by the founder:
+  - Files: `app/admin/page.tsx`, `components/admin/AdminPage.tsx`, `lib/admin.server.ts`, `app/api/admin/{route,members/route,grants/route}.ts`.
+  - Permissions are all checked in `lib/admin.server.ts`:
+    - owner: invites members and admins, changes roles, removes anyone but themself, grants credits;
+    - admin: invites and removes members only;
+    - anyone else gets 404.
+  - The founder owns the 79ai money. Anyone with the Supabase secret key or Supabase admin rights can still run `gaia_grant`, so that restriction rests on trust.
+  - The page shows the provider balance (labelled just "Số dư", no provider name) next to the sum of unexpired, unspent GAIA credit, and warns when the granted credit exceeds the balance.
+  - Grant history = `credit_ledger` rows titled "Tặng credit".
+  - The account menu shows "Quản trị" when `profile.role` is owner or admin. Pages pass `roleOf(user.email)` into `toProfile`.
 - `/rules` ("Quy ước dùng chung") replaces Terms/Privacy on the login page. `/terms` and `/privacy` stay as drafts for a future public launch.
 - Verified on 2026-10-21 against dev :3100 with two temporary users created by magic link and deleted afterwards: an invited user gets 200 on pages and the API and 403 on top-up; a non-invited user gets 401 from the API and a redirect to /login, and is then signed out. The Google callback path itself was not exercised.
 

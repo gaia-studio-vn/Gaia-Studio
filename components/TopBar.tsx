@@ -56,6 +56,12 @@ function AccountMenu({ profile }: { profile: Profile }) {
             <Icon name="coin" />
             Credit &amp; giao dịch
           </Link>
+          {(profile.role === 'owner' || profile.role === 'admin') && (
+            <Link href="/admin" className="menu-link" onClick={close}>
+              <Icon name="user" />
+              Quản trị
+            </Link>
+          )}
           <form action="/auth/signout" method="post">
             <button type="submit" className="danger">
               <Icon name="logout" />
@@ -141,7 +147,7 @@ function CreditButton() {
   );
 }
 
-/** Thanh trên cùng của Studio (logo + credit + tài khoản) hoặc của trang Credit (nút về Studio). */
+/** Thanh trên cùng của Studio (logo + credit + tài khoản) hoặc của trang Credit/Quản trị (nút về Studio). */
 export function TopBar({ profile, variant = 'studio' }: { profile: Profile; variant?: 'studio' | 'credit' }) {
   const { balance } = useCredit();
   return (

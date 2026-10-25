@@ -17,14 +17,20 @@ export async function GET(request: NextRequest) {
   if (code && isSupabaseConfigured()) {
     const supabase = await createSupabaseServer();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error && !isEmailAllowed(data.user?.email)) {
-      // Nhóm riêng: email chưa được mời thì không giữ phiên.
-      await supabase.auth.signOut({ scope: 'local' });
-      return NextResponse.redirect(`${origin}/login?error=${NOT_INVITED}`);
+    if (!error) {
+      const allowed = await isEmailAllowed(data.user?.email).catch(() => null);
+      if (allowed === false) {
+        // Nhóm riêng: email chưa được mời thì không giữ phiên.
+        await supabase.auth.signOut({ scope: 'local' });
+        return NextResponse.redirect(`${origin}/login?error=${NOT_INVITED}`);
+      }
+      if (allowed) return NextResponse.redirect(`${origin}${next}`);
+      // Không đọc được danh sách thành viên: báo lỗi kết nối như khi Supabase không trả lời.
+      reason = 'network';
+    } else {
+      console.error('[auth] đổi code lỗi', error.message);
+      if (isAuthUnavailable(error)) reason = 'network';
     }
-    if (!error) return NextResponse.redirect(`${origin}${next}`);
-    console.error('[auth] đổi code lỗi', error.message);
-    if (isAuthUnavailable(error)) reason = 'network';
   }
   return NextResponse.redirect(`${origin}/login?error=${reason}&next=${encodeURIComponent(next)}`);
 }

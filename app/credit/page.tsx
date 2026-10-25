@@ -3,7 +3,7 @@ import { getProfileRow, pageSession, preferAuthError, toProfile } from '@/lib/au
 import { getCreditSummary, getLedger } from '@/lib/credits.server';
 import { getTopup } from '@/lib/payments.server';
 import { isPayosConfigured } from '@/lib/env';
-import { isPrivateGroup } from '@/lib/access';
+import { isPrivateGroup, roleOf } from '@/lib/access';
 import { CreditProvider } from '@/components/CreditContext';
 import { ToastProvider } from '@/components/Toasts';
 import { CreditPage } from '@/components/credit/CreditPage';
@@ -24,7 +24,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ o
     getLedger(userId),
     Number.isSafeInteger(orderCode) && orderCode > 0 ? getTopup(userId, orderCode).catch(() => null) : null,
   ]).catch(preferAuthError(verified));
-  const profile = toProfile(user, profileRow);
+  const profile = toProfile(user, profileRow, await roleOf(user.email));
   // Đã trả xong thì số dư có thể vừa đổi trong lúc hỏi PayOS.
   const [finalSummary, finalLedger] =
     resume?.status === 'paid' ? await Promise.all([getCreditSummary(userId), getLedger(userId)]) : [summary, ledger];

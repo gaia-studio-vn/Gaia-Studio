@@ -2,14 +2,14 @@
 
 Tài liệu cho người cùng phát triển GAIA với chủ dự án (Đỗ Hiếu Nghĩa). Đọc file này trước, rồi tới [CLAUDE.md](CLAUDE.md).
 
-Đang làm: trang **Quản trị** ngay trong GAIA. Hai quản trị viên mời người dùng bằng tài khoản Google của mình, chỉ chủ nhóm cấp được credit. Khi xong, việc mời người không cần sửa `GAIA_ALLOWED_EMAILS` hay chạy SQL nữa.
+Trang **Quản trị** (`/admin`, trong menu tài khoản): chủ nhóm và quản trị viên mời/gỡ người dùng bằng tài khoản Google của mình; chỉ chủ nhóm cấp credit và thêm quản trị viên.
 
 ## GAIA là gì, đang ở đâu
 
 GAIA Studio là web app tạo ảnh và video bằng AI, gõ prompt tiếng Việt. Phía sau, GAIA gọi API của **Gommo** qua tài khoản **79ai** của chủ dự án.
 
 **Chế độ hiện tại: nhóm riêng** (chọn ngày 21/10/2026). GAIA chỉ dành cho chủ dự án và vài người bạn được mời, không bán credit:
-- Chỉ email có trong `GAIA_ALLOWED_EMAILS` mới đăng nhập được.
+- Chỉ chủ nhóm (`GAIA_OWNER_EMAIL`) và người được mời trên trang Quản trị mới đăng nhập được.
 - Chủ nhóm cấp credit bằng SQL (`gaia_grant`). 1 credit = 1đ chi phí 79ai, không cộng lãi.
 - Trang "Quy ước dùng chung" (`/rules`) thay cho Điều khoản/Bảo mật.
 
@@ -31,7 +31,7 @@ Chi tiết và lý do (pháp lý): [CLAUDE.md](CLAUDE.md), mục "Private group 
 1. Cài **Node.js 24** và git, rồi `git clone https://github.com/gaia-studio-vn/Gaia-Studio.git`. Repo nằm trong Organization `gaia-studio-vn` (chuyển từ `dohieunghia2002/Gaia-Studio` ngày 25/10/2026; địa chỉ cũ tự chuyển hướng). Push bằng tài khoản GitHub của bạn; nhớ chấp nhận lời mời vào Organization.
 2. `npm install`
 3. Lấy file **`gaia-studio.env`** trong thư mục bí mật chủ dự án gửi riêng (không có trên GitHub), đặt vào thư mục gốc repo và đổi tên thành **`.env`**.
-4. `npm run dev`, rồi mở http://localhost:3000 và đăng nhập Google bằng email đã có trong `GAIA_ALLOWED_EMAILS`.
+4. `npm run dev`, rồi mở http://localhost:3000 và đăng nhập Google bằng email đã được mời (Bằng: quản trị viên).
 5. Tài khoản mới có 0 credit. Cấp credit bằng SQL trong Supabase:
 
 ```sql

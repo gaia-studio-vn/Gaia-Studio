@@ -7,7 +7,7 @@ import { isEmailAllowed, NOT_INVITED } from '@/lib/access';
 // Next 16: "proxy" thay cho "middleware". Mỗi request trang: làm mới phiên Supabase (ghi cookie mới
 // nếu token hết hạn) và chặn trang cần đăng nhập. API route tự kiểm tra đăng nhập.
 
-const PROTECTED = ['/studio', '/credit'];
+const PROTECTED = ['/studio', '/credit', '/admin'];
 
 export async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,7 +45,10 @@ export async function proxy(request: NextRequest) {
     // Phiên không còn thì getUser() xoá cookie phiên qua setAll ở trên.
     const { data } = await supabase.auth.getUser();
     if (!data.user) return response;
-    if (!isEmailAllowed(data.user.email)) {
+    // Không đọc được danh sách thành viên: chưa biết người này có được vào không, cứ hiện trang đăng nhập.
+    const allowed = await isEmailAllowed(data.user.email).catch(() => null);
+    if (allowed === null) return response;
+    if (!allowed) {
       // Nhóm riêng: email không (còn) trong danh sách. Xoá phiên trên máy này rồi ở lại trang đăng nhập, kèm lý do.
       await supabase.auth.signOut({ scope: 'local' });
       if (request.nextUrl.searchParams.get('error') === NOT_INVITED) return response;

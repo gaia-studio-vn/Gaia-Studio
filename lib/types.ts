@@ -116,11 +116,46 @@ export interface LedgerEntry {
   createdAt: string;
 }
 
+/** Vai trò trong GAIA (lib/access.ts). Chủ nhóm: GAIA_OWNER_EMAIL; quản trị viên/thành viên: bảng gaia_members. */
+export type Role = 'owner' | 'admin' | 'member';
+
 export interface Profile {
   id: string;
   email: string | null;
   name: string | null;
   avatarUrl: string | null;
+  role: Role | null;
+}
+
+/** Một dòng ở trang Quản trị: người đã được mời (có thể chưa đăng nhập lần nào). */
+export interface AdminMember {
+  email: string;
+  name: string | null;
+  role: Role;
+  /** null: được mời nhưng chưa đăng nhập GAIA lần nào (chưa có tài khoản, chưa cấp credit được). */
+  userId: string | null;
+  balance: number | null;
+  invitedAt: string | null;
+}
+
+export interface AdminGrant {
+  id: number;
+  email: string | null;
+  name: string | null;
+  amount: number;
+  note: string | null;
+  createdAt: string;
+}
+
+export interface AdminOverview {
+  me: { email: string; role: 'owner' | 'admin' };
+  ownerName: string | null;
+  /** Số dư thật ở nhà cung cấp (credit Gommo qua 79ai); null nếu không đọc được. */
+  providerBalance: number | null;
+  /** Tổng credit GAIA còn hạn, chưa dùng, của mọi người. */
+  outstanding: number;
+  members: AdminMember[];
+  grants: AdminGrant[];
 }
 
 export interface CreditSummary {

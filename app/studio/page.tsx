@@ -4,7 +4,7 @@ import { getCatalog } from '@/lib/models.server';
 import { getBalance } from '@/lib/credits.server';
 import { getDetail, listLibraryDays, runningCount, trashCount } from '@/lib/generations.server';
 import { isUuid } from '@/lib/api.server';
-import { isPrivateGroup } from '@/lib/access';
+import { isPrivateGroup, roleOf } from '@/lib/access';
 import { CreditProvider } from '@/components/CreditContext';
 import { ToastProvider } from '@/components/Toasts';
 import { StudioApp } from '@/components/studio/StudioApp';
@@ -40,7 +40,8 @@ export default async function StudioPage({
           .catch(() => null)
       : null,
   ]).catch(preferAuthError(verified));
-  const profile = toProfile(user, profileRow);
+  // Sau getUser() danh sách thành viên đã nằm trong bộ nhớ: roleOf không hỏi Supabase thêm lần nữa.
+  const profile = toProfile(user, profileRow, await roleOf(user.email));
 
   return (
     <CreditProvider initial={balance} canTopup={!isPrivateGroup()}>

@@ -369,6 +369,35 @@ a.home-login:hover { color: #0f0f0e; }
 .carried span { font-size: 12px; color: #8c877d; }
 .carried p { margin: 4px 0 0; font-size: 14px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 
+/* ── Quản trị (/admin) ── */
+.stat-row { display: flex; flex-wrap: wrap; gap: 16px 40px; padding: 20px 24px; }
+.stat { display: flex; flex-direction: column; }
+.stat .k { font-size: 13px; color: #a8a399; }
+.stat .v { margin-top: 4px; font-family: var(--font-mono); font-size: 28px; line-height: 1.1; font-weight: 500; }
+.stat .n { font-size: 12px; color: #8c877d; }
+.stat .n.warn, .warn-text { color: #ee7a63; }
+.warn-text { font-size: 12px; }
+.invite-form { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 0 12px; }
+.invite-form input { flex: 1 1 240px; height: 44px; }
+.invite-form select { flex: 0 0 150px; height: 44px; }
+.invite-btn { height: 44px; padding: 0 18px; background: var(--accent); border-color: var(--accent); color: #1a1206; font-weight: 600; }
+.invite-btn:disabled { opacity: .5; }
+.member-list { list-style: none; margin: 0; padding: 0; }
+.member-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; min-height: 61px; padding: 12px 0; border-top: 1px solid #262622; }
+.member-row[aria-busy='true'] { opacity: .5; pointer-events: none; }
+.member-row .who { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; }
+.member-row .who .n { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.member-row .who .e { font-size: 12px; color: #a8a399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.member-row .bal { width: 90px; text-align: right; font-family: var(--font-mono); }
+.member-row .grant-cell { width: 92px; display: flex; justify-content: flex-end; }
+.member-row .menu-cell { width: 36px; display: flex; justify-content: flex-end; }
+.member-avatar { width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: #2d3142; }
+.member-avatar.pending { background: transparent; border: 1px dashed #3a3a34; color: #8c877d; }
+.member-confirm { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.role-badge { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; background: #1f1f1c; color: #a8a399; white-space: nowrap; }
+.role-badge.owner { background: #2a2112; color: var(--accent); font-weight: 600; }
+.role-badge.admin { background: #23262e; color: #c9cedb; font-weight: 600; }
+
 /* ── Văn bản dài (điều khoản) ── */
 .prose { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; font-size: 15px; line-height: 1.7; }
 .prose h1 { font-size: 28px; line-height: 1.25; margin: 0 0 16px; }

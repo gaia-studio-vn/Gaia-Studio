@@ -10,7 +10,7 @@ import { isAuthUnavailable } from './supabase/network';
 import { AUTH_UNAVAILABLE_HEADER, AuthUnavailableError } from './auth-unavailable';
 import { ApiError } from './api.server';
 import { isEmailAllowed } from './access';
-import type { Profile } from './types';
+import type { Profile, Role } from './types';
 
 /**
  * Người dùng hiện tại (đã xác thực với Supabase), hoặc null.
@@ -28,9 +28,14 @@ export async function getUser(): Promise<User | null> {
     console.error('[auth] không hỏi được Supabase', error?.message);
     throw new AuthUnavailableError();
   }
-  // Nhóm riêng: email đã bị gỡ khỏi danh sách thì coi như chưa đăng nhập. Trang chuyển sang /login,
-  // ở đó proxy.ts xoá phiên và báo lý do.
-  if (data.user && !isEmailAllowed(data.user.email)) return null;
+  // Nhóm riêng: email đã bị gỡ quyền thì coi như chưa đăng nhập. Trang chuyển sang /login,
+  // ở đó proxy.ts xoá phiên và báo lý do. Không đọc được danh sách thành viên thì cũng là mất kết nối.
+  if (data.user) {
+    const allowed = await isEmailAllowed(data.user.email).catch(() => {
+      throw new AuthUnavailableError();
+    });
+    if (!allowed) return null;
+  }
   return data.user ?? null;
 }
 
@@ -113,13 +118,17 @@ export async function getProfile(user: User): Promise<Profile> {
   return toProfile(user, await getProfileRow(user.id));
 }
 
-/** Hồ sơ hiển thị: ưu tiên dòng `profiles`, thiếu thì lấy từ metadata Google của tài khoản. */
-export function toProfile(user: User, data: ProfileRow): Profile {
+/**
+ * Hồ sơ hiển thị: ưu tiên dòng `profiles`, thiếu thì lấy từ metadata Google của tài khoản.
+ * `role` lấy bằng `roleOf(user.email)` (lib/access.ts); sau getUser() thì danh sách thành viên đã nằm sẵn trong bộ nhớ.
+ */
+export function toProfile(user: User, data: ProfileRow, role: Role | null = null): Profile {
   const meta = (user.user_metadata ?? {}) as Record<string, string | undefined>;
   return {
     id: user.id,
     email: data?.email ?? user.email ?? null,
     name: data?.full_name ?? meta.full_name ?? meta.name ?? null,
     avatarUrl: data?.avatar_url ?? meta.avatar_url ?? meta.picture ?? null,
+    role,
   };
 }
