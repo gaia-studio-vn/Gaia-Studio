@@ -444,8 +444,13 @@ a.home-login:hover { color: #0f0f0e; }
   .avatar { width: 40px; height: 40px; }
   .credit-pop { position: fixed; left: 16px; right: 16px; top: 64px; width: auto; max-width: none; }
   .lib-toolbar:not(.select-bar) { flex-wrap: nowrap; align-items: center; }
-  .lib-toolbar:not(.select-bar) > .row { flex: 0 1 auto; justify-content: flex-end; }
-  .lib-tabs { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; gap: 0 16px; overflow-x: auto; scrollbar-width: none; }
+  .lib-toolbar:not(.select-bar) > .row { flex: none; flex-wrap: nowrap; }
+  /* Thùng rác: Dọn thùng rác (và câu xác nhận) xuống hàng riêng để không đè lên các tab */
+  .lib-toolbar.in-trash { flex-wrap: wrap; row-gap: 0; }
+  .lib-toolbar.in-trash .lib-tabs { flex-basis: 100%; }
+  .lib-toolbar.in-trash > .row { flex: 1 1 100%; flex-wrap: wrap; justify-content: flex-end; padding-bottom: 8px; }
+  .lib-toolbar.in-trash .trash-tools .danger-text { flex-basis: 100%; }
+  .lib-tabs { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; gap: 0 14px; overflow-x: auto; scrollbar-width: none; }
   .lib-tabs .tab, .ledger-tabs .tab { flex: none; white-space: nowrap; }
   .lib-toolbar .running { margin: 0; padding: 0 12px; }
   .running-label { display: none; }
@@ -473,4 +478,10 @@ a.home-login:hover { color: #0f0f0e; }
   .ledger .d { grid-column: 2; grid-row: 2; width: auto; }
   .ledger .a { grid-column: 2; grid-row: 3; width: auto; }
   .ledger .a .a-label { display: inline; }
+}
+
+/* Điện thoại hẹp (vd. 360px): nút Chọn chỉ còn dấu ✓ để hàng tab không bị che */
+@media (max-width: 380px) {
+  .select-start { width: 40px; padding: 0; justify-content: center; }
+  .select-start .select-label { display: none; }
 }

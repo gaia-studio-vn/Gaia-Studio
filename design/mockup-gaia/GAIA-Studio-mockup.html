@@ -251,7 +251,10 @@ a.google-btn:hover{color:#1F1F1F;background:#F2F2F2}
   .avatar{width:40px;height:40px}
   #credit-pop{position:fixed!important;left:16px!important;right:16px!important;top:64px!important;width:auto!important}
   .lib-toolbar{flex-wrap:nowrap!important;align-items:center!important;padding:0 16px!important}
-  .lib-tabs{flex-wrap:nowrap!important;gap:0 16px!important;overflow-x:auto;scrollbar-width:none}
+  .lib-toolbar.in-trash{flex-wrap:wrap!important;row-gap:0!important}
+  .lib-toolbar.in-trash .lib-tabs{flex-basis:100%}
+  .lib-toolbar.in-trash #trash-tools{flex:1 1 100%;justify-content:flex-end}
+  .lib-tabs{flex-wrap:nowrap!important;gap:0 14px!important;overflow-x:auto;scrollbar-width:none}
   .lib-tabs .tab{white-space:nowrap;flex:none}
   #library,#trash{padding-left:16px!important;padding-right:16px!important}
   .dock{bottom:12px;padding:0 12px}
@@ -1282,6 +1285,7 @@ a.google-btn:hover{color:#1F1F1F;background:#F2F2F2}
     var trash = tab === 'trash';
     $('library').hidden = trash; $('trash').hidden = !trash;
     $('trash-tools').hidden = !trash; $('lib-running').hidden = trash;
+    document.querySelector('#studio .lib-toolbar').classList.toggle('in-trash', trash);
   }
   all('[data-lib]').forEach(function (b) { b.addEventListener('click', function () { setLib(b.dataset.lib); }); });
   function trashLeft() {

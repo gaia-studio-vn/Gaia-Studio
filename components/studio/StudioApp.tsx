@@ -935,7 +935,7 @@ export function StudioApp({
               </div>
             </div>
           ) : (
-          <div className="lib-toolbar">
+          <div className={`lib-toolbar${inTrash ? ' in-trash' : ''}`}>
             <nav className="lib-tabs" aria-label="Lọc thư viện">
               {(['all', 'image', 'video', 'trash'] as Filter[]).map((f) => (
                 <button key={f} type="button" className="tab" aria-pressed={filter === f} onClick={() => changeFilter(f)}>
@@ -953,9 +953,9 @@ export function StudioApp({
                 </div>
               )}
               {selectable.length > 0 && !confirmEmpty && (
-                <button type="button" className="mini-btn select-start" onClick={() => setSelecting(true)}>
+                <button type="button" className="mini-btn select-start" aria-label="Chọn" title="Chọn" onClick={() => setSelecting(true)}>
                   <Icon name="check" size={14} />
-                  Chọn
+                  <span className="select-label">Chọn</span>
                 </button>
               )}
               {inTrash && !stale && items.length > 0 && (
