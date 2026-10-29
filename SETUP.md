@@ -125,8 +125,8 @@ Thử thật trên máy: nạp mốc thấp nhất (20.000đ) bằng chính tài
 Vercel gói Hobby (miễn phí) dùng được vì web không thu tiền. Giới hạn cần biết: mỗi request tối đa 4,5 MB (ảnh tải lên đã được nén JPEG dưới 4 MB), mỗi request chạy tối đa 300 giây, cron tối đa 1 lần/ngày.
 
 1. **Nạp 79ai.** Số dư 79ai là giới hạn thật: hết tiền thì bấm Tạo sẽ báo "GAIA đang tạm dừng nhận yêu cầu tạo mới" (credit GAIA không bị trừ). `GAIA_PROVIDER_RESERVE` (mặc định 0) giữ lại một khoản trong 79ai nếu cần.
-2. **Google cho phép bạn bè đăng nhập:** Google Cloud Console → **Google Auth Platform → Audience** (OAuth consent screen). Nếu **Publishing status** là **Testing** thì chỉ email trong danh sách **Test users** đăng nhập được (tối đa 100): thêm email bạn bè vào đó, hoặc bấm **Publish app**.
-3. **Vercel** (https://vercel.com, gói Hobby): **Add New → Project** → import repo GitHub → **Root Directory** chọn `gaia-studio` → **Environment Variables**:
+2. **Google cho phép bạn bè đăng nhập:** Google Cloud Console → **Google Auth Platform → Audience** (OAuth consent screen). Nếu **Publishing status** là **Testing** thì chỉ email trong danh sách **Test users** đăng nhập được (tối đa 100): thêm email bạn bè vào đó, hoặc bấm **Publish app**. Nút Publish app chỉ bấm được khi trang **Branding** có đủ link trang chủ, chính sách bảo mật và điều khoản (đều trỏ được về `https://<tên>.vercel.app/rules`), nên làm sau khi deploy; logo để trống để không phải xác minh thương hiệu.
+3. **Vercel** (https://vercel.com, gói Hobby): **Add New → Project** → import repo GitHub → **Root Directory** để mặc định `./` (repo GitHub chính là thư mục `gaia-studio`) → **Environment Variables**:
    - Chép từ `.env`: `GOMMO_ACCESS_TOKEN`, `GOMMO_DOMAIN`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `GAIA_OWNER_EMAIL`, `GAIA_MARKUP` (=1), `GAIA_COST_PER_GOMMO_CREDIT` (=1), `PROMPT_TRANSLATOR` (=gommo).
    - `CRON_SECRET`: một chuỗi ngẫu nhiên từ 16 ký tự trở lên. Vercel tự gửi kèm khi gọi cron; thiếu biến này thì cron bị từ chối.
    - Không cần các biến `PAYOS_*` và `NEXT_PUBLIC_SITE_URL` (chỉ dùng khi bật nạp tiền).
