@@ -350,7 +350,7 @@ function Ledger({ initial }: { initial: { entries: LedgerEntry[]; hasMore: boole
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px 24px', borderBottom: '1px solid #262622' }}>
         <h2 style={{ margin: 0, padding: '12px 0', fontSize: 18, fontWeight: 600 }}>Lịch sử giao dịch</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 20px' }}>
-          <nav aria-label="Lọc giao dịch" style={{ display: 'flex', gap: 20 }}>
+          <nav className="ledger-tabs" aria-label="Lọc giao dịch">
             {FILTERS.map((f) => (
               <button
                 key={f.key}
@@ -404,7 +404,10 @@ function Ledger({ initial }: { initial: { entries: LedgerEntry[]; hasMore: boole
                 {e.detail && <small>{e.detail}</small>}
               </span>
               <span className={`d${e.delta > 0 ? ' plus' : ''}`}>{fmtDelta(e.delta)}</span>
-              <span className="a">{fmtNumber(e.balanceAfter)}</span>
+              <span className="a">
+                <span className="a-label">Số dư </span>
+                {fmtNumber(e.balanceAfter)}
+              </span>
             </li>
           ))}
         </ul>

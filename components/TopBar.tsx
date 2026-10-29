@@ -100,7 +100,7 @@ function CreditButton() {
         <Icon name="chevron" size={14} />
       </button>
       {open && (
-        <div className="popover" style={{ right: 0, top: 'calc(100% + 8px)', width: 340, maxWidth: 'calc(100vw - 32px)', padding: 14 }}>
+        <div className="popover credit-pop">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 600 }}>Lịch sử credit</span>
             <span className="mono muted" style={{ fontSize: 12 }}>

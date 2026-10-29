@@ -197,6 +197,9 @@ export function StudioApp({
   );
   const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Điện thoại: khung tạo thu gọn thành 1 hàng cho tới khi chạm vào (CSS chỉ áp ở màn hẹp).
+  // Prompt mang từ trang chủ sang thì mở sẵn.
+  const [composerOpen, setComposerOpen] = useState(Boolean(initialPrompt));
   const itemsRef = useRef(items);
   useEffect(() => {
     itemsRef.current = items;
@@ -411,6 +414,7 @@ export function StudioApp({
   };
 
   const focusPrompt = () => {
+    setComposerOpen(true);
     requestAnimationFrame(() => {
       const el = textareaRef.current;
       if (!el) return;
@@ -721,6 +725,7 @@ export function StudioApp({
       setBalance(res.balance);
       addCreated(res.items);
       setDraft((d) => ({ ...d, prompt: '', start: null, end: null, refs: [] }));
+      setComposerOpen(false);
       if (textareaRef.current) textareaRef.current.style.height = 'auto';
     } catch (err) {
       handleError(err);
@@ -931,7 +936,7 @@ export function StudioApp({
             </div>
           ) : (
           <div className="lib-toolbar">
-            <nav aria-label="Lọc thư viện" style={{ display: 'flex', flexWrap: 'wrap', gap: '0 24px' }}>
+            <nav className="lib-tabs" aria-label="Lọc thư viện">
               {(['all', 'image', 'video', 'trash'] as Filter[]).map((f) => (
                 <button key={f} type="button" className="tab" aria-pressed={filter === f} onClick={() => changeFilter(f)}>
                   {f === 'all' ? 'Tất cả' : f === 'image' ? 'Ảnh' : f === 'video' ? 'Video' : 'Thùng rác'}
@@ -943,7 +948,8 @@ export function StudioApp({
               {!inTrash && Math.max(runningCount, serverRunning) > 0 && (
                 <div className="running">
                   <span className="pulse-dot" />
-                  {Math.max(runningCount, serverRunning)} đang chạy
+                  {Math.max(runningCount, serverRunning)}
+                  <span className="running-label"> đang chạy</span>
                 </div>
               )}
               {selectable.length > 0 && !confirmEmpty && (
@@ -1061,6 +1067,8 @@ export function StudioApp({
           onPickFile={onPickFile}
           onPasteImages={pasteImages}
           textareaRef={textareaRef}
+          expanded={composerOpen}
+          onExpandedChange={setComposerOpen}
         />
       ) : (
         <div className="dock">

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+import { useCallback, useEffect, useRef, useState, type Dispatch, type RefObject, type SetStateAction } from 'react';
+import { flushSync } from 'react-dom';
 import { Icon } from '../Icon';
 import { useDismiss } from '../useDismiss';
 import { useCredit } from '../CreditContext';
@@ -234,6 +235,8 @@ export function Composer({
   onPickFile,
   onPasteImages,
   textareaRef,
+  expanded,
+  onExpandedChange,
 }: {
   catalog: Catalog;
   draft: Draft;
@@ -244,11 +247,50 @@ export function Composer({
   onPickFile: (slot: 'start' | 'end' | 'ref', file: File) => void;
   onPasteImages: (files: File[]) => void;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
+  /** Điện thoại: false thì khung tạo chỉ hiện 1 hàng (CSS `.composer.collapsed`, chỉ áp ở màn hẹp). */
+  expanded: boolean;
+  onExpandedChange: (expanded: boolean) => void;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
   const closePicker = useCallback(() => setPickerOpen(false), []);
   useDismiss(pickerOpen, pickerRef, closePicker);
+
+  // Chạm ra ngoài khung tạo thì thu gọn lại; prompt và ảnh đã chọn vẫn giữ.
+  useEffect(() => {
+    if (!expanded) return;
+    const onPointer = (e: PointerEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) onExpandedChange(false);
+    };
+    document.addEventListener('pointerdown', onPointer);
+    return () => document.removeEventListener('pointerdown', onPointer);
+  }, [expanded, onExpandedChange]);
+
+  // Vừa mở ra (vd. prompt mang từ trang chủ sang): đặt con trỏ vào cuối prompt.
+  const wasExpanded = useRef(expanded);
+  useEffect(() => {
+    if (expanded && !wasExpanded.current) {
+      const el = textareaRef.current;
+      if (el && document.activeElement !== el) {
+        el.focus();
+        el.setSelectionRange(el.value.length, el.value.length);
+        el.style.height = 'auto';
+        el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+      }
+    }
+    wasExpanded.current = expanded;
+  }, [expanded, textareaRef]);
+
+  const expand = () => {
+    // flushSync để focus ngay trong lần chạm: iOS chỉ mở bàn phím khi focus nằm trong thao tác của người dùng.
+    flushSync(() => onExpandedChange(true));
+    const el = textareaRef.current;
+    if (!el) return;
+    el.focus();
+    el.setSelectionRange(el.value.length, el.value.length);
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+  };
   const fileRef = useRef<HTMLInputElement>(null);
   const slotRef = useRef<'start' | 'end' | 'ref'>('start');
 
@@ -323,7 +365,19 @@ export function Composer({
 
   return (
     <div className="dock">
-      <section className="composer" aria-label="Tạo mới" ref={pickerRef}>
+      <section className={`composer${expanded ? '' : ' collapsed'}`} aria-label="Tạo mới" ref={pickerRef}>
+        <button type="button" className="composer-bar" aria-expanded={expanded} aria-label="Mở khung tạo" onClick={expand}>
+          <span className="bar-model">
+            <Icon name={kind === 'video' ? 'video' : 'image'} />
+            {model?.name ?? 'Chọn model'}
+          </span>
+          <span className={`bar-prompt${draft.prompt.trim() ? ' has-text' : ''}`}>
+            {draft.prompt.trim() || (kind === 'video' ? 'Mô tả video bạn muốn tạo…' : 'Mô tả ảnh bạn muốn tạo…')}
+          </span>
+          <span className="bar-open" aria-hidden="true">
+            <Icon name="chevron" size={18} style={{ transform: 'rotate(180deg)' }} />
+          </span>
+        </button>
         <ModelPicker models={catalog[kind]} current={model} open={pickerOpen} onPick={pickModel} />
 
         <div className="row">
@@ -337,6 +391,18 @@ export function Composer({
               Video
             </button>
           </div>
+          <button
+            type="button"
+            className="ghost-icon composer-collapse"
+            aria-label="Thu gọn khung tạo"
+            onClick={() => {
+              setPickerOpen(false);
+              onExpandedChange(false);
+            }}
+          >
+            <Icon name="chevron" size={18} />
+          </button>
+          <span className="row-break" aria-hidden="true" />
           <button
             type="button"
             className="model-btn"
@@ -444,7 +510,7 @@ export function Composer({
         />
 
         <div className="row-between">
-          <div className="row" style={{ gap: 6 }}>
+          <div className="row chips" style={{ gap: 6 }}>
             {model &&
               fields.map((f) => (
                 <OptionChip
@@ -468,7 +534,7 @@ export function Composer({
               />
             )}
           </div>
-          <div className="row" style={{ gap: 14 }}>
+          <div className="row submit-row" style={{ gap: 14 }}>
             {unit == null ? (
               <span className="cost lacking">Tổ hợp này không có giá</span>
             ) : (
